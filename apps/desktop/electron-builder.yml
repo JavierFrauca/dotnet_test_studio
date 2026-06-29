@@ -1,0 +1,16 @@
+appId: com.dotnettest.studio
+productName: dotnet test studio
+directories:
+  output: dist
+  buildResources: build
+files:
+  - out/**
+extraResources:
+  - from: resources/engine
+    to: engine
+win:
+  target: nsis
+  artifactName: ${productName}-${version}-setup.${ext}
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true

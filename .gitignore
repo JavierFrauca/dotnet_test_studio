@@ -1,0 +1,23 @@
+## .NET
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+.vs/
+
+## Build artifacts
+artifacts/
+*.nupkg
+
+## Rider / VS Code
+.idea/
+.vscode/
+
+## OS
+Thumbs.db
+.DS_Store
+
+## dotnettest worktrees (por si se crean dentro del repo)
+.dotnettest-wt/
