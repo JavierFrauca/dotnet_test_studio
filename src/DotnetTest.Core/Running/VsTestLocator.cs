@@ -55,7 +55,7 @@ public static class VsTestLocator
         foreach (var d in defaults)
             if (Directory.Exists(d)) return d;
 
-        throw new InvalidOperationException("No se pudo localizar la instalación de .NET (DOTNET_ROOT).");
+        throw new InvalidOperationException("Could not locate the .NET installation (DOTNET_ROOT).");
     }
 
     private static string ResolveSymlink(string path)

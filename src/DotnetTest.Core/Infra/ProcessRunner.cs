@@ -54,7 +54,7 @@ public static class ProcessRunner
         };
 
         if (!process.Start())
-            throw new InvalidOperationException($"No se pudo iniciar el proceso '{fileName}'.");
+            throw new InvalidOperationException($"Could not start process '{fileName}'.");
 
         process.BeginOutputReadLine();
         process.BeginErrorReadLine();

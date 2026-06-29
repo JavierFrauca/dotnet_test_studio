@@ -55,7 +55,7 @@ public static class WorktreeManager
         var res = await ProcessRunner.RunAsync("git",
             new[] { "-C", dir, "rev-parse", "--show-toplevel" }, ct: ct).ConfigureAwait(false);
         if (!res.Success)
-            throw new InvalidOperationException($"'{dir}' no es un repositorio git.");
+            throw new InvalidOperationException($"'{dir}' is not a git repository.");
         return res.StdOut.Trim();
     }
 
@@ -128,7 +128,7 @@ public static class WorktreeManager
 
         if (!res.Success)
             throw new InvalidOperationException(
-                $"No se pudo crear el worktree para '{reference}': {res.StdErr.Trim()}");
+                $"Could not create the worktree for '{reference}': {res.StdErr.Trim()}");
 
         return new Worktree(dir, repoRoot, reference);
     }
