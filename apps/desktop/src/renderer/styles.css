@@ -460,6 +460,24 @@ body {
 .row-test.failed.selected { background: #3a2626; }
 .label { overflow: hidden; text-overflow: ellipsis; }
 .dur, .cnt-mini { margin-left: auto; color: var(--muted); font-size: 12px; }
+/* Botón ▶ "run this" en filas de clase/test (aparece al hover). */
+.row-run {
+  margin-left: auto;
+  opacity: 0;
+  pointer-events: none;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 10px;
+  line-height: 1;
+  padding: 2px 7px;
+}
+.row:hover .row-run { opacity: 1; pointer-events: auto; }
+.row-run:hover { background: rgba(72, 224, 138, 0.15); border-color: rgba(72, 224, 138, 0.4); }
+.btn-rerun { background: #3a2424; border-color: #5a3030; color: var(--amber); }
+.btn-rerun:hover { background: #472a2a; }
 .glyph { width: 12px; text-align: center; }
 .glyph.passed { color: var(--green); }
 .glyph.failed { color: var(--red); }

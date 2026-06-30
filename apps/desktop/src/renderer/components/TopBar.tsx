@@ -48,22 +48,35 @@ export function TopBar() {
           </button>
           <button
             className="btn btn-primary"
-            disabled={running || !wtReady || !s.explored || s.stale || visibleCount === 0}
+            disabled={
+              running ||
+              !wtReady ||
+              !s.solution ||
+              (s.testProjects.length > 0 && s.selectedProjects.length === 0) ||
+              (s.explored && !s.stale && visibleCount === 0)
+            }
             title={
               !wtReady
                 ? `Create the isolated worktree for ${s.selectedBranch} first`
-                : !s.explored
-                  ? 'Explore first to list the tests'
-                  : s.stale
-                    ? 'Selection changed — explore again before running'
-                    : visibleCount === 0
-                      ? 'No visible tests to run'
-                      : `Run ${visibleCount} visible test(s)`
+                : !s.explored || s.stale
+                  ? 'Build, list and run the tests'
+                  : visibleCount === 0
+                    ? 'No visible tests to run'
+                    : `Run ${visibleCount} visible test(s)`
             }
-            onClick={() => void s.run()}
+            onClick={() => void s.runAll()}
           >
             ▶ Run tests
           </button>
+          {s.explored && !s.stale && c.failed > 0 && (
+            <button
+              className="btn btn-rerun"
+              title={`Re-run only the ${c.failed} failed test(s)`}
+              onClick={() => void s.rerunFailed()}
+            >
+              ↻ Re-run failed ({c.failed})
+            </button>
+          )}
         </>
       )}
     </div>

@@ -9,7 +9,12 @@ export function TestTree() {
   const select = useStore((s) => s.select)
   const collapsed = useStore((s) => s.collapsed)
   const toggleNode = useStore((s) => s.toggleNode)
+  const runNode = useStore((s) => s.runNode)
+  const phase = useStore((s) => s.phase)
+  const explored = useStore((s) => s.explored)
+  const stale = useStore((s) => s.stale)
   const filters = useFilters()
+  const canRun = explored && !stale && phase !== 'preparing' && phase !== 'building' && phase !== 'discovering' && phase !== 'running'
 
   const projects = Object.entries(tree)
   if (projects.length === 0) return <div className="tree empty">Select a folder and click Explore.</div>
@@ -40,6 +45,19 @@ export function TestTree() {
                   <span className={'glyph ' + classStatus(leaves)}>{STATUS_ICON[classStatus(leaves)]}</span>
                   <span className="label">{cls}</span>
                   <span className="cnt-mini">{leaves.length}</span>
+                  {canRun && (
+                    <button
+                      className="row-run"
+                      title={`Run this class (${leaves.length})`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        const fqn = leaves[0].fqn
+                        void runNode({ classFqn: fqn.slice(0, fqn.lastIndexOf('.')) })
+                      }}
+                    >
+                      ▶
+                    </button>
+                  )}
                 </div>
                 {!clsCollapsed && leaves.map((leaf) => {
                   const key = keyFor(proj, cls, leaf.name)
@@ -53,6 +71,18 @@ export function TestTree() {
                       <span className="label">{leaf.name}</span>
                       {(leaf.status === 'passed' || leaf.status === 'failed') && (
                         <span className="dur">{Math.round(leaf.durationMs)} ms</span>
+                      )}
+                      {canRun && (
+                        <button
+                          className="row-run"
+                          title="Run this test"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            void runNode({ fqn: leaf.fqn })
+                          }}
+                        >
+                          ▶
+                        </button>
                       )}
                     </div>
                   )
