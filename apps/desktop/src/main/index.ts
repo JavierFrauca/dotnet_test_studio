@@ -1,9 +1,30 @@
-import { app, BrowserWindow, ipcMain, dialog, Menu, Notification, nativeImage } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, Menu, Notification, nativeImage, shell } from 'electron'
 import { join, resolve } from 'node:path'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { spawn } from 'node:child_process'
 import { EngineClient } from './engine'
 
 let mainWindow: BrowserWindow | null = null
+
+/** Persistencia del tamaño/posición de la ventana entre sesiones. */
+function boundsFile(): string {
+  return join(app.getPath('userData'), 'window-state.json')
+}
+function loadBounds(): { width: number; height: number; x?: number; y?: number } | null {
+  try {
+    return JSON.parse(readFileSync(boundsFile(), 'utf-8'))
+  } catch {
+    return null
+  }
+}
+function saveBounds(): void {
+  if (!mainWindow || mainWindow.isDestroyed()) return
+  try {
+    writeFileSync(boundsFile(), JSON.stringify(mainWindow.getBounds()))
+  } catch {
+    /* best effort */
+  }
+}
 const engine = new EngineClient()
 
 /** Resuelve cómo lanzar el sidecar: exe empaquetado en producción, dll de dev si no. */
@@ -28,9 +49,12 @@ function resolveEngineCommand(): { command: string; args: string[] } {
 function createWindow(): void {
   // En producción el icono lo lleva el exe; en dev lo tomamos del build/.
   const devIcon = join(__dirname, '../../build/icon.png')
+  const saved = loadBounds()
   mainWindow = new BrowserWindow({
-    width: 1180,
-    height: 760,
+    width: saved?.width ?? 1180,
+    height: saved?.height ?? 760,
+    x: saved?.x,
+    y: saved?.y,
     minWidth: 880,
     minHeight: 560,
     backgroundColor: '#1b1b1d',
@@ -44,6 +68,8 @@ function createWindow(): void {
       nodeIntegration: false,
     },
   })
+
+  mainWindow.on('close', saveBounds)
 
   engine.on('notify', (method: string, payload: unknown) => {
     mainWindow?.webContents.send('engine:event', method, payload)
@@ -91,6 +117,19 @@ ipcMain.on('taskbar:thumbclip', (_e, rect: { x: number; y: number; width: number
   if (!mainWindow) return
   // {0,0,0,0} resetea al thumbnail de la ventana completa.
   mainWindow.setThumbnailClip(rect ?? { x: 0, y: 0, width: 0, height: 0 })
+})
+
+ipcMain.on('open:editor', (_e, p: { file: string; line?: number }) => {
+  if (!p?.file) return
+  const line = p.line && p.line > 0 ? p.line : 1
+  // Intenta VS Code (code -g file:line); si no está, abre con la app por defecto del SO.
+  try {
+    const child = spawn('code', ['-g', `${p.file}:${line}`], { shell: true, detached: true, stdio: 'ignore' })
+    child.on('error', () => void shell.openPath(p.file))
+    child.unref()
+  } catch {
+    void shell.openPath(p.file)
+  }
 })
 
 ipcMain.on('app:notify', (_e, n: { title: string; body: string }) => {

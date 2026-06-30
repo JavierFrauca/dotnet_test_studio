@@ -61,6 +61,12 @@ function DetailFor({ leaf }: { leaf: TestLeaf }) {
           )}
           {leaf.status === 'passed' && <div className="ok">Test passed.</div>}
           {leaf.status === 'skipped' && <div className="warn">Test skipped.</div>}
+          {leaf.stdout && (
+            <>
+              <div className="detail-label">Output</div>
+              <pre className="stdout">{leaf.stdout}</pre>
+            </>
+          )}
         </>
       )}
 

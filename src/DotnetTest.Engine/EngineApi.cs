@@ -163,7 +163,8 @@ public sealed class EngineApi : IDisposable
 
         var files = await DiffService.ChangedFilesAsync(repoRoot, resolved, CancellationToken.None);
         return new BranchChangesDto(true, resolved,
-            files.Select(f => new GitChangedFileDto(f.Path, f.Status)).ToArray());
+            files.Select(f => new GitChangedFileDto(
+                f.Path, f.Status, Path.Combine(repoRoot, f.Path).Replace('\\', '/'))).ToArray());
     }
 
     [JsonRpcMethod("testGitContext")]

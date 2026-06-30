@@ -39,7 +39,8 @@ public sealed record TestEventDto(
     string Status,      // notrun | running | passed | failed | skipped
     double DurationMs,
     string? Error,
-    string? Stack);
+    string? Stack,
+    string? Stdout);
 
 public sealed record RunSummaryDto(
     int Total, int Passed, int Failed, int Skipped, double ElapsedMs,
@@ -51,7 +52,7 @@ public sealed record SolutionInfoDto(
 public sealed record PresetDto(string Name, string Expression, string? Description);
 
 // ── Contexto git ────────────────────────────────────────────────────────────
-public sealed record GitChangedFileDto(string Path, string Status);
+public sealed record GitChangedFileDto(string Path, string Status, string Abs);
 
 public sealed record GitBlameDto(string Commit, string Author, string Date, string Summary, bool OnBranch);
 

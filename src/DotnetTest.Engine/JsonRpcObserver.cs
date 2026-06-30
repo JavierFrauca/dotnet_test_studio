@@ -37,5 +37,6 @@ public sealed class JsonRpcObserver : IRunObserver
         Status: node.OwnStatus.ToString().ToLowerInvariant(),
         DurationMs: node.Duration.TotalMilliseconds,
         Error: node.ErrorMessage,
-        Stack: node.StackTrace);
+        Stack: node.StackTrace,
+        Stdout: node.StandardOutput);
 }

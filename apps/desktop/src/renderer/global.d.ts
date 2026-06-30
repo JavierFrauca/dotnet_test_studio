@@ -6,6 +6,7 @@ export interface EngineApi {
   notify(n: { title: string; body: string }): void
   setOverlay(p: { dataUrl: string | null; description: string }): void
   setThumbClip(rect: { x: number; y: number; width: number; height: number } | null): void
+  openInEditor(p: { file: string; line?: number }): void
 }
 
 declare global {

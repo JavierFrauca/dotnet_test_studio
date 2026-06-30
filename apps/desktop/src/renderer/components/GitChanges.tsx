@@ -54,10 +54,12 @@ export function GitChanges({ leaf }: { leaf: TestLeaf }) {
 
 function GitFrameView({ frame }: { frame: GitFrame }) {
   const short = frame.relPath ?? frame.file
+  const open = () => window.engine.openInEditor({ file: frame.file, line: frame.line })
   if (!frame.changed) {
     return (
       <div className="git-frame">
-        <i className="ti ti-file" /> <span className="mono">{short}:{frame.line}</span>
+        <i className="ti ti-file" />{' '}
+        <button className="link-loc mono" onClick={open} title="Open in editor">{short}:{frame.line}</button>
         <span className="git-tag muted">unchanged</span>
       </div>
     )
@@ -65,7 +67,8 @@ function GitFrameView({ frame }: { frame: GitFrame }) {
   return (
     <div className="git-frame changed">
       <div className="git-frame-head">
-        <i className="ti ti-file-diff" /> <span className="mono fail">{short}:{frame.line}</span>
+        <i className="ti ti-file-diff" />{' '}
+        <button className="link-loc mono fail" onClick={open} title="Open in editor">{short}:{frame.line}</button>
         {frame.blame?.onBranch && <span className="git-tag warn">changed on this branch</span>}
       </div>
       {frame.diff && <DiffHunk diff={frame.diff} />}

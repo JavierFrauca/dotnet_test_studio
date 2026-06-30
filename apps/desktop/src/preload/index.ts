@@ -25,6 +25,9 @@ const api = {
   /** Recorta el preview de la taskbar a una región de la ventana (null = ventana completa). */
   setThumbClip: (rect: { x: number; y: number; width: number; height: number } | null): void =>
     ipcRenderer.send('taskbar:thumbclip', rect),
+
+  /** Abre un fichero en el editor (VS Code 'code -g file:line', o la app por defecto). */
+  openInEditor: (p: { file: string; line?: number }): void => ipcRenderer.send('open:editor', p),
 }
 
 contextBridge.exposeInMainWorld('engine', api)

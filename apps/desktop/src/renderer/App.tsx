@@ -7,12 +7,14 @@ import { FiltersArea } from './components/Filters'
 import { MainArea } from './components/MainArea'
 import { StatusBar } from './components/StatusBar'
 import { BranchCheckoutModal } from './components/BranchCheckoutModal'
+import { GlobalChanges } from './components/GlobalChanges'
 import { RunFeedback } from './components/RunFeedback'
 
 export function App() {
   const applyEvents = useStore((s) => s.applyEvents)
   const loadPresets = useStore((s) => s.loadPresets)
   const refreshRepoState = useStore((s) => s.refreshRepoState)
+  const restoreSession = useStore((s) => s.restoreSession)
 
   useEffect(() => {
     // Re-sincroniza la rama real al recuperar el foco (el checkout pudo cambiar por consola/IDE).
@@ -20,6 +22,33 @@ export function App() {
     window.addEventListener('focus', onFocus)
     return () => window.removeEventListener('focus', onFocus)
   }, [refreshRepoState])
+
+  // Restaura la última sesión (carpeta + proyectos + rama/modo) al arrancar.
+  useEffect(() => {
+    void restoreSession()
+  }, [restoreSession])
+
+  // Persiste el subconjunto relevante de la sesión cuando cambia.
+  useEffect(() => {
+    let prevJson = ''
+    return useStore.subscribe((s) => {
+      if (!s.solution) return
+      const j = JSON.stringify({
+        path: s.solution.path,
+        useWorktree: s.useWorktree,
+        selectedBranch: s.selectedBranch,
+        selectedProjects: s.selectedProjects,
+      })
+      if (j !== prevJson) {
+        prevJson = j
+        try {
+          localStorage.setItem('dts.session', j)
+        } catch {
+          /* almacenamiento no disponible */
+        }
+      }
+    })
+  }, [])
 
   useEffect(() => {
     // Agrupa la avalancha de eventos de descubrimiento en un render por frame.
@@ -73,6 +102,7 @@ export function App() {
       <MainArea />
       <StatusBar />
       <BranchCheckoutModal />
+      <GlobalChanges />
       <RunFeedback />
     </div>
   )
