@@ -152,21 +152,6 @@ public sealed class EngineApi : IDisposable
         return (await WorktreeManager.ListBranchesAsync(dir, CancellationToken.None)).ToArray();
     }
 
-    [JsonRpcMethod("branchChanges")]
-    public async Task<BranchChangesDto> BranchChanges(string path, string? baseRef)
-    {
-        var repoRoot = TryRepoRoot(path);
-        if (repoRoot is null) return new BranchChangesDto(false, null, Array.Empty<GitChangedFileDto>());
-
-        var resolved = await DiffService.ResolveBaseAsync(repoRoot, baseRef, CancellationToken.None);
-        if (resolved is null) return new BranchChangesDto(true, null, Array.Empty<GitChangedFileDto>());
-
-        var files = await DiffService.ChangedFilesAsync(repoRoot, resolved, CancellationToken.None);
-        return new BranchChangesDto(true, resolved,
-            files.Select(f => new GitChangedFileDto(
-                f.Path, f.Status, Path.Combine(repoRoot, f.Path).Replace('\\', '/'))).ToArray());
-    }
-
     [JsonRpcMethod("testGitContext")]
     public async Task<GitContextDto> TestGitContext(string path, string? stack, string? baseRef)
     {

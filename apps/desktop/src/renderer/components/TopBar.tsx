@@ -18,10 +18,6 @@ export function TopBar() {
 
       <TargetControl />
 
-      <button className="btn" disabled={!s.solution} onClick={() => s.openChanges()} title="Changed files vs base branch">
-        <i className="ti ti-git-compare" /> Changes
-      </button>
-
       {isRunning ? (
         <span className="running-inline">
           <span className="mini-spinner" />

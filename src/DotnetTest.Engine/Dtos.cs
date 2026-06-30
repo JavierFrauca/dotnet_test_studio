@@ -52,13 +52,9 @@ public sealed record SolutionInfoDto(
 public sealed record PresetDto(string Name, string Expression, string? Description);
 
 // ── Contexto git ────────────────────────────────────────────────────────────
-public sealed record GitChangedFileDto(string Path, string Status, string Abs);
-
 public sealed record GitBlameDto(string Commit, string Author, string Date, string Summary, bool OnBranch);
 
 public sealed record GitFrameDto(
     string File, string? RelPath, int Line, bool Changed, GitBlameDto? Blame, string? Diff);
 
 public sealed record GitContextDto(bool IsRepo, string? Base, GitFrameDto[] Frames);
-
-public sealed record BranchChangesDto(bool IsRepo, string? Base, GitChangedFileDto[] Files);

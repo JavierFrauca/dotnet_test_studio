@@ -489,25 +489,9 @@ body {
 .link-loc:hover { text-decoration: underline; }
 .link-loc.fail { color: #e88; }
 
-/* Modal de cambios global vs base */
-.modal-changes { align-items: stretch; gap: 12px; min-width: 480px; max-width: 660px; }
-.changes-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.changes-base { display: flex; align-items: center; gap: 8px; }
+/* Botón-icono (cerrar banner/modal) */
 .iconbtn { background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 2px 4px; border-radius: 4px; }
 .iconbtn:hover { background: var(--bg-0); color: var(--text); }
-.changes-list { display: flex; flex-direction: column; max-height: 360px; overflow: auto; border: 1px solid var(--border); border-radius: 8px; }
-.changes-row {
-  display: flex; align-items: center; gap: 10px; padding: 6px 10px; text-align: left; color: var(--text);
-  background: transparent; border: none; border-bottom: 1px solid var(--border); cursor: pointer;
-}
-.changes-row:last-child { border-bottom: none; }
-.changes-row:hover { background: var(--bg-0); }
-.chg-status { font-size: 10px; min-width: 62px; text-transform: uppercase; letter-spacing: 0.3px; }
-.chg-A { color: var(--green); }
-.chg-M { color: var(--amber); }
-.chg-D { color: var(--red); }
-.chg-R { color: var(--accent); }
-.chg-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
 
 /* Banner de aviso (p.ej. nada que ejecutar) */
 .notice {

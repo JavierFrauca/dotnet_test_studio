@@ -8,7 +8,6 @@ import { MainArea } from './components/MainArea'
 import { StatusBar } from './components/StatusBar'
 import { Notice } from './components/Notice'
 import { BranchCheckoutModal } from './components/BranchCheckoutModal'
-import { GlobalChanges } from './components/GlobalChanges'
 import { RunFeedback } from './components/RunFeedback'
 
 export function App() {
@@ -104,7 +103,6 @@ export function App() {
       <MainArea />
       <StatusBar />
       <BranchCheckoutModal />
-      <GlobalChanges />
       <RunFeedback />
     </div>
   )
