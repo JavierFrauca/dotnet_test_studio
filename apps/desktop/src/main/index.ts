@@ -26,6 +26,8 @@ function resolveEngineCommand(): { command: string; args: string[] } {
 }
 
 function createWindow(): void {
+  // En producción el icono lo lleva el exe; en dev lo tomamos del build/.
+  const devIcon = join(__dirname, '../../build/icon.png')
   mainWindow = new BrowserWindow({
     width: 1180,
     height: 760,
@@ -33,6 +35,7 @@ function createWindow(): void {
     minHeight: 560,
     backgroundColor: '#1b1b1d',
     title: 'dotnet test studio',
+    icon: existsSync(devIcon) ? devIcon : undefined,
     autoHideMenuBar: true,
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
