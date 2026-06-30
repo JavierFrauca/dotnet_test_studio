@@ -13,15 +13,22 @@ public static class XunitTraitProbe
 {
     /// <summary>Mapa FQN (namespace.clase.método) → traits (Name,Value).</summary>
     public static Dictionary<string, List<KeyValuePair<string, string>>> Collect(
-        IEnumerable<string> assemblyPaths, CancellationToken ct = default)
+        IEnumerable<string> assemblyPaths, CancellationToken ct = default, Action<string>? log = null)
     {
         var byFqn = new Dictionary<string, List<KeyValuePair<string, string>>>(StringComparer.Ordinal);
+        int probed = 0, failed = 0;
         foreach (var asm in assemblyPaths)
         {
             if (ct.IsCancellationRequested) break;
-            try { ProbeAssembly(asm, byFqn); }
-            catch { /* ensamblado ilegible / no-test: se ignora */ }
+            try { ProbeAssembly(asm, byFqn); probed++; }
+            catch (Exception ex)
+            {
+                // Antes se tragaba en silencio: ahora se reporta para poder diagnosticar.
+                failed++;
+                log?.Invoke($"trait probe: '{Path.GetFileName(asm)}' skipped ({ex.GetType().Name}: {ex.Message})");
+            }
         }
+        log?.Invoke($"trait probe: {probed} assemblies read, {failed} failed, {byFqn.Count} tests with decorators.");
         return byFqn;
     }
 
@@ -30,11 +37,15 @@ public static class XunitTraitProbe
         if (!File.Exists(assemblyPath)) return;
 
         var asmDir = Path.GetDirectoryName(assemblyPath)!;
-        var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var p in Directory.GetFiles(ResolveRuntimeDir(), "*.dll")) paths.Add(p);
-        foreach (var p in Directory.GetFiles(asmDir, "*.dll")) paths.Add(p);
+        // Deduplica por NOMBRE de ensamblado, no por ruta: si el bin del test y el runtime
+        // traen el mismo dll (System.Runtime, etc.), PathAssemblyResolver revienta por identidad
+        // duplicada y el probe fallaría en silencio. Gana el del bin del test (la versión que el
+        // propio test referencia).
+        var byName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var p in Directory.GetFiles(ResolveRuntimeDir(), "*.dll")) byName[Path.GetFileName(p)] = p;
+        foreach (var p in Directory.GetFiles(asmDir, "*.dll")) byName[Path.GetFileName(p)] = p;
 
-        using var mlc = new MetadataLoadContext(new PathAssemblyResolver(paths));
+        using var mlc = new MetadataLoadContext(new PathAssemblyResolver(byName.Values));
         var assembly = mlc.LoadFromAssemblyPath(assemblyPath);
 
         foreach (var type in SafeGetTypes(assembly))

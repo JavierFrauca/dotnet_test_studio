@@ -109,13 +109,22 @@ public sealed class TestRunner
                 {
                     try
                     {
-                        var traitsByFqn = XunitTraitProbe.Collect(sources, ct);
+                        var traitsByFqn = XunitTraitProbe.Collect(sources, ct, observer.OnLog);
+                        var matched = 0;
+                        var total = 0;
                         lock (state.Tree.SyncRoot)
                             foreach (var leaf in state.Tree.Root.Leaves())
+                            {
+                                total++;
                                 if (traitsByFqn.TryGetValue(leaf.FullName, out var traits))
+                                {
                                     leaf.Traits = traits;
+                                    matched++;
+                                }
+                            }
+                        observer.OnLog($"Decorators: matched {matched}/{total} tests ({traitsByFqn.Count} from probe).");
                     }
-                    catch { /* ensamblados no-xUnit: sin decoradores */ }
+                    catch (Exception ex) { observer.OnLog($"Decorator probe error: {ex.Message}"); }
 
                     observer.OnPhase(RunPhase.Completed);
                     observer.OnRunComplete();
