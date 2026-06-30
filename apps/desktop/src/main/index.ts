@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, Menu, Notification } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, Menu, Notification, nativeImage } from 'electron'
 import { join, resolve } from 'node:path'
 import { existsSync } from 'node:fs'
 import { EngineClient } from './engine'
@@ -79,6 +79,18 @@ ipcMain.on('taskbar:progress', (_e, p: { mode: string; value?: number }) => {
     default:
       mainWindow.setProgressBar(-1) // limpia
   }
+})
+
+ipcMain.on('taskbar:overlay', (_e, p: { dataUrl: string | null; description: string }) => {
+  if (!mainWindow) return
+  const img = p.dataUrl ? nativeImage.createFromDataURL(p.dataUrl) : null
+  mainWindow.setOverlayIcon(img, p.description ?? '')
+})
+
+ipcMain.on('taskbar:thumbclip', (_e, rect: { x: number; y: number; width: number; height: number } | null) => {
+  if (!mainWindow) return
+  // {0,0,0,0} resetea al thumbnail de la ventana completa.
+  mainWindow.setThumbnailClip(rect ?? { x: 0, y: 0, width: 0, height: 0 })
 })
 
 ipcMain.on('app:notify', (_e, n: { title: string; body: string }) => {

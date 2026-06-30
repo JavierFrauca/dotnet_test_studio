@@ -18,6 +18,13 @@ const api = {
 
   /** Notificación de sistema (toast). */
   notify: (n: { title: string; body: string }): void => ipcRenderer.send('app:notify', n),
+
+  /** Insignia (overlay) en el icono de la taskbar. dataUrl null la quita. */
+  setOverlay: (p: { dataUrl: string | null; description: string }): void => ipcRenderer.send('taskbar:overlay', p),
+
+  /** Recorta el preview de la taskbar a una región de la ventana (null = ventana completa). */
+  setThumbClip: (rect: { x: number; y: number; width: number; height: number } | null): void =>
+    ipcRenderer.send('taskbar:thumbclip', rect),
 }
 
 contextBridge.exposeInMainWorld('engine', api)

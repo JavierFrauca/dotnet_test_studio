@@ -4,6 +4,8 @@ export interface EngineApi {
   pickFolder(): Promise<string | null>
   setProgress(p: { mode: 'none' | 'indeterminate' | 'normal' | 'error'; value?: number }): void
   notify(n: { title: string; body: string }): void
+  setOverlay(p: { dataUrl: string | null; description: string }): void
+  setThumbClip(rect: { x: number; y: number; width: number; height: number } | null): void
 }
 
 declare global {
