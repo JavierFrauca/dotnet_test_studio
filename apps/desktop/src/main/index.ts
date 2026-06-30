@@ -34,7 +34,7 @@ function createWindow(): void {
     minWidth: 880,
     minHeight: 560,
     backgroundColor: '#1b1b1d',
-    title: 'dotnet test studio',
+    title: 'Dotnet Test Studio',
     icon: existsSync(devIcon) ? devIcon : undefined,
     autoHideMenuBar: true,
     webPreferences: {

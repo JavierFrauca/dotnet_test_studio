@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    Arranque llave en mano de dotnet test studio: comprueba requisitos, compila la solución
+    Arranque llave en mano de Dotnet Test Studio: comprueba requisitos, compila la solución
     y genera el instalador de la app de escritorio.
 
 .DESCRIPTION

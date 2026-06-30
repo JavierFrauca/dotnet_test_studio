@@ -1,4 +1,4 @@
-# dotnet test studio
+# Dotnet Test Studio
 
 App de escritorio (Windows) para ejecutar tests de .NET con un **árbol navegable en vivo** y la
 posibilidad de probar **otra rama** sin tocar tu working tree, usando `git worktree`.
@@ -77,7 +77,7 @@ src/DotnetTest.Core/     Motor compartido (sin UI)
   Filters/               Prefiltros guardados
   Orchestration/         RunService (worktree + run reutilizable)
 src/DotnetTest.Engine/   Sidecar JSON-RPC/WebSocket para la app de escritorio
-apps/desktop/            App Electron + React (dotnet test studio)
+apps/desktop/            App Electron + React (Dotnet Test Studio)
 tests/Sample.Tests/      Tests de ejemplo para dogfooding (con decoradores)
 tests/DotnetTest.Core.Tests/  Tests unitarios del motor
 ```

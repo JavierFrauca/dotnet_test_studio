@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-    Genera el instalador de escritorio de dotnet test studio (Electron + sidecar .NET).
+    Genera el instalador de escritorio de Dotnet Test Studio (Electron + sidecar .NET).
 
 .DESCRIPTION
     Publica el sidecar DotnetTest.Engine como ejecutable self-contained, lo embebe en la app,

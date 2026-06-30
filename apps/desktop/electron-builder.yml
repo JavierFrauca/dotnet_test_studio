@@ -1,5 +1,5 @@
 appId: com.dotnettest.studio
-productName: dotnet test studio
+productName: Dotnet Test Studio
 directories:
   output: dist
   buildResources: build
