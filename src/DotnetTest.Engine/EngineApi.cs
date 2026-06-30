@@ -152,6 +152,40 @@ public sealed class EngineApi : IDisposable
         return (await WorktreeManager.ListBranchesAsync(dir, CancellationToken.None)).ToArray();
     }
 
+    [JsonRpcMethod("failureSource")]
+    public SourceSnippetDto FailureSource(string path, string? stack)
+    {
+        var frames = StackTraceParser.Parse(stack);
+        var repoRoot = TryRepoRoot(path);
+        const int ctx = 3;
+        foreach (var f in frames)
+        {
+            if (!File.Exists(f.File)) continue;
+            try
+            {
+                var all = File.ReadAllLines(f.File);
+                if (f.Line < 1 || f.Line > all.Length) continue;
+                var start = Math.Max(1, f.Line - ctx);
+                var end = Math.Min(all.Length, f.Line + ctx);
+                var lines = all[(start - 1)..end];
+
+                string? rel = null;
+                if (repoRoot is not null)
+                {
+                    try
+                    {
+                        var r = Path.GetRelativePath(repoRoot, f.File).Replace('\\', '/');
+                        if (!r.StartsWith("../", StringComparison.Ordinal) && !Path.IsPathRooted(r)) rel = r;
+                    }
+                    catch { /* fuera del repo */ }
+                }
+                return new SourceSnippetDto(true, f.File, rel, f.Line, start, lines);
+            }
+            catch { /* fichero ilegible: siguiente frame */ }
+        }
+        return new SourceSnippetDto(false, null, null, 0, 0, Array.Empty<string>());
+    }
+
     [JsonRpcMethod("testGitContext")]
     public async Task<GitContextDto> TestGitContext(string path, string? stack, string? baseRef)
     {

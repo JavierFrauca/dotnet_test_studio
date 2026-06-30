@@ -531,6 +531,51 @@ body {
 .text-accent { color: var(--accent); }
 .mono { font-family: "Cascadia Code", Consolas, monospace; }
 
+/* #6 — banners de regresión / arreglado */
+.regress {
+  display: flex; align-items: center; gap: 8px; margin: 4px 0 10px;
+  padding: 7px 10px; border-radius: 6px; font-size: 12.5px;
+  background: #2e1f10; color: #e8b15a; border: 1px solid #5a4422;
+}
+.fixed-note {
+  display: flex; align-items: center; gap: 8px; margin: 4px 0 10px;
+  padding: 7px 10px; border-radius: 6px; font-size: 12.5px;
+  background: #16271c; color: #6bd99a; border: 1px solid #2f5a3f;
+}
+.regress .ti, .fixed-note .ti { font-size: 15px; flex-shrink: 0; }
+
+/* #2 — expected vs actual */
+.ea { display: flex; flex-direction: column; gap: 4px; margin: 8px 0; }
+.ea-row { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px; border-radius: 6px; font-size: 12.5px; }
+.ea-row .mono { word-break: break-word; }
+.ea-exp { background: #16271c; }
+.ea-act { background: #2a1d1d; }
+.ea-tag { font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; min-width: 58px; }
+.ea-exp .ea-tag { color: #6bd99a; }
+.ea-act .ea-tag { color: #e88; }
+
+/* #1 — snippet de código en el punto del fallo */
+.snippet {
+  margin: 0; background: #15161a; border-radius: 6px; padding: 6px 0; overflow: auto;
+  font-family: "Cascadia Code", Consolas, monospace; font-size: 12px; line-height: 1.55;
+}
+.snip-line { display: flex; gap: 10px; padding: 0 10px; white-space: pre; }
+.snip-line.hot { background: rgba(226, 75, 74, 0.16); }
+.snip-n { color: #55585f; text-align: right; min-width: 34px; user-select: none; }
+.snip-line.hot .snip-n { color: #e88; }
+.snip-code { color: #c8ced6; }
+.snip-line.hot .snip-code { color: #f0d0d0; }
+
+/* #3 — stack clicable + frames de framework atenuados */
+.stack-line { white-space: pre-wrap; }
+.stack-line.ext { color: #5b5e66; }
+.stack-line.located .link-loc { color: #9fc6ff; text-align: left; white-space: pre-wrap; word-break: break-word; }
+.stack-line.located .link-loc:hover { color: var(--accent); }
+.stack-toggle {
+  margin-left: 8px; background: none; border: none; color: var(--accent);
+  cursor: pointer; font-size: 11px; padding: 0; text-decoration: underline;
+}
+
 /* Pestañas del detalle */
 .detail-tabs { display: flex; gap: 4px; margin: 10px 0 8px; border-bottom: 1px solid var(--border); }
 .dtab {

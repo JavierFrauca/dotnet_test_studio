@@ -58,3 +58,7 @@ public sealed record GitFrameDto(
     string File, string? RelPath, int Line, bool Changed, GitBlameDto? Blame, string? Diff);
 
 public sealed record GitContextDto(bool IsRepo, string? Base, GitFrameDto[] Frames);
+
+// Snippet de código en el punto del fallo (primer frame del stack con fichero legible).
+public sealed record SourceSnippetDto(
+    bool Found, string? File, string? RelPath, int Line, int StartLine, string[] Lines);
