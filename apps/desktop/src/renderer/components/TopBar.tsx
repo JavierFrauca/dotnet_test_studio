@@ -18,11 +18,6 @@ export function TopBar() {
 
       <TargetControl />
 
-      <select className="select narrow" value={s.configuration} onChange={(e) => s.setConfig({ configuration: e.target.value })}>
-        <option>Debug</option>
-        <option>Release</option>
-      </select>
-
       {isRunning ? (
         <span className="running-inline">
           <span className="mini-spinner" />
