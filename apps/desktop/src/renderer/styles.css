@@ -374,7 +374,7 @@ body {
 .target-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .target-btn .caret { font-size: 14px; color: var(--muted); margin-left: auto; }
 .target-menu {
-  position: absolute; top: 36px; left: 0; z-index: 30; width: 330px;
+  position: absolute; top: 36px; left: 0; z-index: 30; width: 430px; max-width: 90vw;
   background: var(--bg-1); border: 1px solid var(--border); border-radius: 10px;
   box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5); padding: 6px;
 }
@@ -386,7 +386,10 @@ body {
 .tm-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
 .tm-title .ti { font-size: 15px; color: var(--muted); }
 .tm-sub { font-size: 12px; color: var(--muted); }
+.tm-sub b { color: var(--text); font-weight: 500; word-break: break-all; }
 .tm-action { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+/* El selector de rama crece y nunca desborda; la rama larga se trunca con ellipsis. */
+.tm-action .select { flex: 1 1 180px; width: auto; min-width: 0; max-width: 100%; }
 .tm-status { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
 .tm-actions { display: flex; gap: 6px; margin-top: 2px; }
 .target-sep { height: 1px; background: var(--border); margin: 2px 6px; }
