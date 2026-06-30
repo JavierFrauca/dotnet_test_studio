@@ -50,21 +50,30 @@ public static class XunitTraitProbe
 
         foreach (var type in SafeGetTypes(assembly))
         {
-            if (!type.IsClass || type.IsAbstract && !type.IsSealed) continue;
-
-            var classTraits = ReadTraits(type.GetCustomAttributesData());
-
-            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+            // Un tipo problemático (base no resoluble, etc.) se omite sin abortar el ensamblado.
+            try
             {
-                if (!IsTestMethod(method)) continue;
+                if (!type.IsClass || type.IsAbstract && !type.IsSealed) continue;
 
-                var traits = new List<KeyValuePair<string, string>>(classTraits);
-                traits.AddRange(ReadTraits(method.GetCustomAttributesData()));
-                if (traits.Count == 0) continue;
+                // Traits de clase, incluyendo los HEREDADOS: muchas suites ponen el decorador de
+                // agrupación (Feature, Area…) en una clase base y las de test heredan de ella.
+                var classTraits = new List<KeyValuePair<string, string>>();
+                for (var t = type; t is not null && t.Name != "Object"; t = SafeBase(t))
+                    classTraits.AddRange(ReadTraits(t.GetCustomAttributesData()));
 
-                var fqn = type.FullName + "." + method.Name;
-                byFqn[fqn] = traits;
+                foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                {
+                    if (!IsTestMethod(method)) continue;
+
+                    var traits = new List<KeyValuePair<string, string>>(classTraits);
+                    traits.AddRange(ReadTraits(method.GetCustomAttributesData()));
+                    if (traits.Count == 0) continue;
+
+                    var fqn = type.FullName + "." + method.Name;
+                    byFqn[fqn] = traits;
+                }
             }
+            catch { /* tipo problemático: se omite */ }
         }
     }
 
@@ -188,14 +197,24 @@ public static class XunitTraitProbe
 
     private static bool IsTraitAttribute(Type attrType)
     {
+        // Marca ITraitAttribute (marcador en xUnit v2; con GetTraits() en v3). Va en su PROPIO
+        // try: si la interfaz vive en un ensamblado no resoluble, GetInterfaces() lanza, pero eso
+        // NO debe impedir la 2ª comprobación (leer [TraitDiscoverer] no resuelve tipos).
         try
         {
             foreach (var i in attrType.GetInterfaces())
                 if (i.Name == "ITraitAttribute") return true;
+        }
+        catch { /* interfaz en ensamblado no resoluble */ }
+
+        // [TraitDiscoverer(...)] sobre el atributo: solo lee metadatos.
+        try
+        {
             foreach (var a in attrType.GetCustomAttributesData())
                 if (a.AttributeType.Name == "TraitDiscovererAttribute") return true;
         }
-        catch { /* tipo no resoluble */ }
+        catch { /* metadatos ilegibles */ }
+
         return false;
     }
 

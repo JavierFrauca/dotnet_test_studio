@@ -123,6 +123,12 @@ public sealed class TestRunner
                                 }
                             }
                         observer.OnLog($"Decorators: matched {matched}/{total} tests ({traitsByFqn.Count} from probe).");
+                        var byName = traitsByFqn.Values
+                            .SelectMany(v => v)
+                            .GroupBy(t => t.Key, StringComparer.OrdinalIgnoreCase)
+                            .OrderByDescending(g => g.Count())
+                            .Select(g => $"{g.Key}={g.Count()}");
+                        observer.OnLog($"Decorators by name: {string.Join(", ", byName)}");
                     }
                     catch (Exception ex) { observer.OnLog($"Decorator probe error: {ex.Message}"); }
 
