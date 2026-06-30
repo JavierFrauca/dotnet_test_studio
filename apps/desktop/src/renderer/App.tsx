@@ -6,6 +6,7 @@ import { TopBar } from './components/TopBar'
 import { FiltersArea } from './components/Filters'
 import { MainArea } from './components/MainArea'
 import { StatusBar } from './components/StatusBar'
+import { Notice } from './components/Notice'
 import { BranchCheckoutModal } from './components/BranchCheckoutModal'
 import { GlobalChanges } from './components/GlobalChanges'
 import { RunFeedback } from './components/RunFeedback'
@@ -98,6 +99,7 @@ export function App() {
           )}
         </div>
       )}
+      <Notice />
       <FiltersArea />
       <MainArea />
       <StatusBar />

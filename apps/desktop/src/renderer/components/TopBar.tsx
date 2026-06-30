@@ -52,20 +52,14 @@ export function TopBar() {
           </button>
           <button
             className="btn btn-primary"
-            disabled={
-              running ||
-              !wtReady ||
-              !s.solution ||
-              (s.testProjects.length > 0 && s.selectedProjects.length === 0) ||
-              (s.explored && !s.stale && visibleCount === 0)
-            }
+            disabled={running || !wtReady || !s.solution || (s.testProjects.length > 0 && s.selectedProjects.length === 0)}
             title={
               !wtReady
                 ? `Create the isolated worktree for ${s.selectedBranch} first`
                 : !s.explored || s.stale
                   ? 'Build, list and run the tests'
                   : visibleCount === 0
-                    ? 'No visible tests to run'
+                    ? 'No visible tests — click for details'
                     : `Run ${visibleCount} visible test(s)`
             }
             onClick={() => void s.runAll()}

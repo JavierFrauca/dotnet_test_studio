@@ -508,6 +508,15 @@ body {
 .chg-D { color: var(--red); }
 .chg-R { color: var(--accent); }
 .chg-path { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+
+/* Banner de aviso (p.ej. nada que ejecutar) */
+.notice {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border-bottom: 1px solid #5a4a22;
+  background: #2a2310; color: var(--amber); font-size: 13px; flex-shrink: 0;
+}
+.notice > .ti { font-size: 16px; flex-shrink: 0; }
+.notice-text { flex: 1; }
 .glyph { width: 12px; text-align: center; }
 .glyph.passed { color: var(--green); }
 .glyph.failed { color: var(--red); }
