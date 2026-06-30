@@ -11,6 +11,13 @@ const api = {
   },
 
   pickFolder: (): Promise<string | null> => ipcRenderer.invoke('dialog:openFolder'),
+
+  /** Progreso en el icono de la taskbar. mode: 'none' limpia, 'indeterminate' anima, 'normal'/'error' usan value 0..1. */
+  setProgress: (p: { mode: 'none' | 'indeterminate' | 'normal' | 'error'; value?: number }): void =>
+    ipcRenderer.send('taskbar:progress', p),
+
+  /** Notificación de sistema (toast). */
+  notify: (n: { title: string; body: string }): void => ipcRenderer.send('app:notify', n),
 }
 
 contextBridge.exposeInMainWorld('engine', api)

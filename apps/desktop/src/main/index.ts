@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, dialog, Menu, Notification } from 'electron'
 import { join, resolve } from 'node:path'
 import { existsSync } from 'node:fs'
 import { EngineClient } from './engine'
@@ -63,6 +63,34 @@ ipcMain.handle('engine:call', async (_e, method: string, params: unknown[]) => {
   return engine.call(method, params ?? [])
 })
 
+ipcMain.on('taskbar:progress', (_e, p: { mode: string; value?: number }) => {
+  if (!mainWindow) return
+  const clamp = (v: number) => Math.max(0, Math.min(1, v))
+  switch (p.mode) {
+    case 'indeterminate':
+      mainWindow.setProgressBar(2, { mode: 'indeterminate' })
+      break
+    case 'normal':
+      mainWindow.setProgressBar(clamp(p.value ?? 0))
+      break
+    case 'error':
+      mainWindow.setProgressBar(clamp(p.value ?? 1), { mode: 'error' })
+      break
+    default:
+      mainWindow.setProgressBar(-1) // limpia
+  }
+})
+
+ipcMain.on('app:notify', (_e, n: { title: string; body: string }) => {
+  if (!Notification.isSupported()) return
+  const notif = new Notification({ title: n.title, body: n.body })
+  notif.on('click', () => {
+    mainWindow?.show()
+    mainWindow?.focus()
+  })
+  notif.show()
+})
+
 ipcMain.handle('dialog:openFolder', async () => {
   const res = await dialog.showOpenDialog(mainWindow!, {
     title: 'Selecciona una solución, proyecto o carpeta',
@@ -72,6 +100,7 @@ ipcMain.handle('dialog:openFolder', async () => {
 })
 
 app.whenReady().then(async () => {
+  app.setAppUserModelId('com.dotnettest.studio') // toasts atribuidos a la app (icono/nombre correctos)
   Menu.setApplicationMenu(null) // sin barra de menú File/Edit/View/…
   try {
     await engine.start(resolveEngineCommand())

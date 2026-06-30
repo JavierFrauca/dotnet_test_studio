@@ -2,6 +2,8 @@ export interface EngineApi {
   call(method: string, ...params: unknown[]): Promise<unknown>
   onEvent(cb: (method: string, payload: any) => void): () => void
   pickFolder(): Promise<string | null>
+  setProgress(p: { mode: 'none' | 'indeterminate' | 'normal' | 'error'; value?: number }): void
+  notify(n: { title: string; body: string }): void
 }
 
 declare global {
