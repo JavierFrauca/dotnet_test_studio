@@ -1,6 +1,6 @@
 {
   "name": "dotnettest-studio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "App de escritorio para ejecutar tests .NET, con TUI viva, ramas y prefiltros",
   "main": "out/main/index.js",
   "author": "dotnettest",
