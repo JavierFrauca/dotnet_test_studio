@@ -6,6 +6,7 @@ import { TopBar } from './components/TopBar'
 import { FiltersArea } from './components/Filters'
 import { MainArea } from './components/MainArea'
 import { StatusBar } from './components/StatusBar'
+import { BranchCheckoutModal } from './components/BranchCheckoutModal'
 
 export function App() {
   const applyEvents = useStore((s) => s.applyEvents)
@@ -62,6 +63,7 @@ export function App() {
       <FiltersArea />
       <MainArea />
       <StatusBar />
+      <BranchCheckoutModal />
     </div>
   )
 }

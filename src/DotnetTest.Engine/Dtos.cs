@@ -15,6 +15,8 @@ public sealed record RunArgs(
 public sealed record WorktreeStatusDto(
     bool Exists, string? Branch, string? Head, bool Outdated, string? Path, string? Error);
 
+public sealed record CheckoutResultDto(bool Ok, bool WasDirty, string? Error);
+
 public sealed record ProjectInfoDto(string Name, string Path);
 
 public sealed record TraitDto(string Name, string Value);

@@ -113,6 +113,25 @@ public sealed class EngineApi : IDisposable
         return new SolutionInfoDto(entry, repo, branch, Path.GetFileName(entry), branches.ToArray());
     }
 
+    [JsonRpcMethod("checkout")]
+    public async Task<CheckoutResultDto> Checkout(string path, string branch)
+    {
+        var root = TryRepoRoot(path);
+        if (root is null) return new CheckoutResultDto(false, false, "Not a git repository.");
+
+        var status = await ProcessRunner.RunAsync("git", new[] { "-C", root, "status", "--porcelain" });
+        var wasDirty = status.Success && !string.IsNullOrWhiteSpace(status.StdOut);
+
+        var res = await ProcessRunner.RunAsync("git", new[] { "-C", root, "checkout", branch });
+        if (!res.Success)
+        {
+            var msg = res.StdErr.Trim();
+            if (string.IsNullOrEmpty(msg)) msg = res.StdOut.Trim();
+            return new CheckoutResultDto(false, wasDirty, string.IsNullOrEmpty(msg) ? "git checkout failed." : msg);
+        }
+        return new CheckoutResultDto(true, wasDirty, null);
+    }
+
     [JsonRpcMethod("listBranches")]
     public async Task<string[]> ListBranches(string path)
     {

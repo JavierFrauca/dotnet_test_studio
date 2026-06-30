@@ -20,8 +20,8 @@ export function TopBar() {
         className="select"
         disabled={!s.solution || s.branches.length === 0}
         value={s.selectedBranch ?? ''}
-        onChange={(e) => s.setConfig({ selectedBranch: e.target.value })}
-        title="Branch"
+        onChange={(e) => s.selectBranch(e.target.value)}
+        title={s.useWorktree ? 'Target branch for the isolated worktree' : 'Switch branch (checks out your working copy)'}
       >
         {s.branches.map((b) => (
           <option key={b} value={b}>
