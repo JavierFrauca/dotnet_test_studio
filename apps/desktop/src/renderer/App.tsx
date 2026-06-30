@@ -11,6 +11,14 @@ import { BranchCheckoutModal } from './components/BranchCheckoutModal'
 export function App() {
   const applyEvents = useStore((s) => s.applyEvents)
   const loadPresets = useStore((s) => s.loadPresets)
+  const refreshRepoState = useStore((s) => s.refreshRepoState)
+
+  useEffect(() => {
+    // Re-sincroniza la rama real al recuperar el foco (el checkout pudo cambiar por consola/IDE).
+    const onFocus = () => void refreshRepoState()
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [refreshRepoState])
 
   useEffect(() => {
     // Agrupa la avalancha de eventos de descubrimiento en un render por frame.

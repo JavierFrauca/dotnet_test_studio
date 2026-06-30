@@ -113,6 +113,18 @@ public sealed class EngineApi : IDisposable
         return new SolutionInfoDto(entry, repo, branch, Path.GetFileName(entry), branches.ToArray());
     }
 
+    [JsonRpcMethod("repoState")]
+    public async Task<RepoStateDto> RepoState(string path)
+    {
+        var root = TryRepoRoot(path);
+        if (root is null) return new RepoStateDto(false, null, false, false);
+
+        var branch = await WorktreeManager.TryGetBranchAsync(root, CancellationToken.None);
+        var status = await ProcessRunner.RunAsync("git", new[] { "-C", root, "status", "--porcelain" });
+        var dirty = status.Success && !string.IsNullOrWhiteSpace(status.StdOut);
+        return new RepoStateDto(true, branch, branch is null, dirty);
+    }
+
     [JsonRpcMethod("checkout")]
     public async Task<CheckoutResultDto> Checkout(string path, string branch)
     {

@@ -360,6 +360,39 @@ body {
 .confirm-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 2px; }
 .confirm-actions .btn { display: inline-flex; align-items: center; gap: 6px; }
 
+/* Control unificado de target (working copy / isolated worktree) */
+.target { position: relative; }
+.target-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 30px; padding: 0 10px; max-width: 300px;
+  background: var(--bg-2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); cursor: pointer;
+}
+.target-btn:hover:not(:disabled) { border-color: var(--border-strong, #45454c); }
+.target-btn:disabled { opacity: 0.5; cursor: default; }
+.target-btn > .ti { font-size: 15px; color: var(--muted); }
+.target-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.target-btn .caret { font-size: 14px; color: var(--muted); margin-left: auto; }
+.target-menu {
+  position: absolute; top: 36px; left: 0; z-index: 30; width: 330px;
+  background: var(--bg-1); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.5); padding: 6px;
+}
+.target-mode { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border-radius: 8px; cursor: pointer; }
+.target-mode:hover { background: var(--bg-0); }
+.target-mode.on { background: rgba(72, 224, 138, 0.06); }
+.target-mode > input { margin-top: 3px; accent-color: #48e08a; flex-shrink: 0; }
+.tm-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.tm-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.tm-title .ti { font-size: 15px; color: var(--muted); }
+.tm-sub { font-size: 12px; color: var(--muted); }
+.tm-action { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tm-status { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+.tm-actions { display: flex; gap: 6px; margin-top: 2px; }
+.target-sep { height: 1px; background: var(--border); margin: 2px 6px; }
+.btn.small { height: 26px; padding: 0 10px; font-size: 12px; }
+.btn.small .ti { font-size: 14px; }
+
 /* Barra informativa (worktree) */
 .info-bar {
   display: flex;

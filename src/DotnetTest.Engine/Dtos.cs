@@ -17,6 +17,8 @@ public sealed record WorktreeStatusDto(
 
 public sealed record CheckoutResultDto(bool Ok, bool WasDirty, string? Error);
 
+public sealed record RepoStateDto(bool IsRepo, string? Branch, bool Detached, bool Dirty);
+
 public sealed record ProjectInfoDto(string Name, string Path);
 
 public sealed record TraitDto(string Name, string Value);
