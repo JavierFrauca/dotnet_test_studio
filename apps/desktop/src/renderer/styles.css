@@ -460,9 +460,10 @@ body {
 .row-test.failed.selected { background: #3a2626; }
 .label { overflow: hidden; text-overflow: ellipsis; }
 .dur, .cnt-mini { margin-left: auto; color: var(--muted); font-size: 12px; }
-/* Botón ▶ "run this" en filas de clase/test (aparece al hover). */
+/* Botón ▶ "run this" en filas de clase/test (aparece al hover). Sin margin-left:auto propio:
+   si lo tuviera, competiría con el de .dur/.cnt-mini y ambos se separarían a media fila en vez
+   de quedar pegados a la derecha (el gap de .row ya los separa lo justo). */
 .row-run {
-  margin-left: auto;
   opacity: 0;
   pointer-events: none;
   background: transparent;
