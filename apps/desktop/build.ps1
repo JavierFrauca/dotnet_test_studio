@@ -49,9 +49,9 @@ foreach ($tool in 'dotnet', 'node', 'npm') {
     }
 }
 
-# 2) Detectar RID
+# 2) Detectar RID (sin depender de tipos .NET; funciona en PowerShell 5.1 y 7)
 if ([string]::IsNullOrWhiteSpace($Runtime)) {
-    $arch = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
+    $arch = if ("$env:PROCESSOR_ARCHITECTURE" -match 'ARM64') { 'arm64' } else { 'x64' }
     $Runtime = "win-$arch"
 }
 
