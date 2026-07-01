@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog, Menu, Notification, nativeImage, shell } from 'electron'
 import { join, resolve } from 'node:path'
 import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { spawn } from 'node:child_process'
+import { spawn, execFileSync } from 'node:child_process'
 import { EngineClient } from './engine'
 
 let mainWindow: BrowserWindow | null = null
@@ -26,6 +26,51 @@ function saveBounds(): void {
   }
 }
 const engine = new EngineClient()
+
+/**
+ * El sidecar es framework-dependent (no embebe el runtime): comprueba que .NET 10 esté instalado.
+ * No añade requisitos nuevos — ejecutar tests ya exige el SDK de .NET 10+, cuyo instalador incluye
+ * tanto el runtime de ASP.NET Core como el de .NET.
+ */
+function hasDotnetRuntime10(): boolean {
+  try {
+    const out = execFileSync('dotnet', ['--list-runtimes'], { encoding: 'utf-8', timeout: 5000 })
+    return /Microsoft\.NETCore\.App 10\./.test(out) && /Microsoft\.AspNetCore\.App 10\./.test(out)
+  } catch {
+    return false
+  }
+}
+
+/** Si falta el runtime, avisa con un diálogo claro y un enlace a la descarga en vez de fallar
+ *  en silencio. Devuelve false si la app debe cerrarse (el usuario eligió descargar o salir). */
+async function ensureDotnetRuntime(): Promise<boolean> {
+  if (process.env.DOTNETTEST_ENGINE || process.env.DOTNETTEST_SMOKE) return true // override / smoke test
+  if (hasDotnetRuntime10()) return true
+
+  const res = await dialog.showMessageBox({
+    type: 'warning',
+    title: '.NET runtime not found',
+    message: 'Dotnet Test Studio needs the .NET 10 runtime.',
+    detail:
+      "Couldn't find the .NET 10 runtime on this machine. Running tests already requires the " +
+      '.NET SDK 10+ installed, which includes it — install the SDK and this will resolve itself.',
+    buttons: ['Download .NET', 'Continue anyway', 'Quit'],
+    defaultId: 0,
+    cancelId: 2,
+    noLink: true,
+  })
+
+  if (res.response === 0) {
+    await shell.openExternal('https://dotnet.microsoft.com/download/dotnet/10.0')
+    app.quit()
+    return false
+  }
+  if (res.response === 2) {
+    app.quit()
+    return false
+  }
+  return true // "Continue anyway"
+}
 
 /** Resuelve cómo lanzar el sidecar: exe empaquetado en producción, dll de dev si no. */
 function resolveEngineCommand(): { command: string; args: string[] } {
@@ -153,10 +198,19 @@ ipcMain.handle('dialog:openFolder', async () => {
 app.whenReady().then(async () => {
   app.setAppUserModelId('com.dotnettest.studio') // toasts atribuidos a la app (icono/nombre correctos)
   Menu.setApplicationMenu(null) // sin barra de menú File/Edit/View/…
+
+  if (!(await ensureDotnetRuntime())) return // el usuario eligió descargar/salir
+
   try {
     await engine.start(resolveEngineCommand())
   } catch (err) {
     console.error('No se pudo arrancar el engine:', err)
+    void dialog.showMessageBox({
+      type: 'error',
+      title: 'Engine failed to start',
+      message: "Dotnet Test Studio couldn't start its background engine.",
+      detail: String((err as any)?.message ?? err),
+    })
   }
   createWindow()
 

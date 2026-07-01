@@ -4,8 +4,9 @@
     Genera el instalador de escritorio de Dotnet Test Studio (Electron + sidecar .NET).
 
 .DESCRIPTION
-    Publica el sidecar DotnetTest.Engine como ejecutable self-contained, lo embebe en la app,
-    compila el bundle de Electron y produce el instalador NSIS en apps/desktop/dist.
+    Publica el sidecar DotnetTest.Engine como ejecutable framework-dependent (usa el runtime de
+    .NET ya instalado en la máquina, no lo embebe), lo copia a la app, compila el bundle de
+    Electron y produce el instalador NSIS en apps/desktop/dist.
 
     Equivale a 'npm run dist', pero además:
       - Mata procesos DotnetTest.Engine colgados que bloquean el exe (evita EPERM al republicar).
@@ -19,7 +20,7 @@
     No ejecuta 'npm install' aunque falte node_modules.
 
 .PARAMETER EngineOnly
-    Solo publica el sidecar self-contained en resources/engine (sin generar el instalador).
+    Solo publica el sidecar en resources/engine (sin generar el instalador).
 
 .EXAMPLE
     .\build.ps1
@@ -70,8 +71,8 @@ if (-not $SkipDeps -and -not (Test-Path (Join-Path $appDir 'node_modules'))) {
     if ($LASTEXITCODE -ne 0) { throw "npm install falló." }
 }
 
-# 5) Publicar el sidecar self-contained (lo usa también 'npm run dist', pero así controlamos el RID)
-Write-Step "Publicando sidecar self-contained ($Runtime)…"
+# 5) Publicar el sidecar (lo usa también 'npm run dist', pero así controlamos el RID)
+Write-Step "Publicando sidecar framework-dependent ($Runtime)…"
 $env:RID = $Runtime
 & npm run build:engine
 if ($LASTEXITCODE -ne 0) { throw "La publicación del sidecar falló." }

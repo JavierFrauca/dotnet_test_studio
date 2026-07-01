@@ -44,9 +44,9 @@ npm run dev                                  # arranca la app en modo desarrollo
 
 ```powershell
 cd apps/desktop
-.\build.ps1                    # publica el sidecar self-contained, compila y crea el instalador NSIS
+.\build.ps1                    # publica el sidecar, compila y crea el instalador NSIS
 .\build.ps1 -Runtime win-arm64 # otro RID
-.\build.ps1 -EngineOnly        # solo publica el sidecar self-contained
+.\build.ps1 -EngineOnly        # solo publica el sidecar
 ```
 
 El script libera procesos del sidecar colgados, instala dependencias si faltan y deja el
@@ -65,7 +65,11 @@ instalador en `apps/desktop/dist/`.
   exploraciones/ejecuciones, y se elimina con `git worktree remove` al destruirlo.
 - **Arquitectura**: la app lanza el sidecar `DotnetTest.Engine` (que reutiliza `DotnetTest.Core`)
   en `127.0.0.1` con un token efímero, y habla con él por **JSON-RPC sobre WebSocket** recibiendo
-  los resultados de los tests en streaming.
+  los resultados de los tests en streaming. El sidecar se publica **framework-dependent** (usa el
+  runtime de .NET ya instalado, no lo embebe): no añade requisitos, porque ejecutar tests ya exige
+  el SDK de .NET 10+, cuyo instalador incluye tanto el runtime de ASP.NET Core como el de .NET.
+  Al arrancar, la app comprueba que el runtime esté disponible y, si falta, muestra un aviso claro
+  con enlace a la descarga oficial en vez de fallar en silencio.
 
 ## Estructura
 
